@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: yaude-icloud-java
+  description: yaude-icloud-java
+  tags:
+    - app-accelerator
+    - java
+    - spring
+    - web
+    - tanzu
+  annotations:
+    'backstage.io/kubernetes-label-selector': 'app.kubernetes.io/part-of=yaude-icloud-java'
+spec:
+  type: service
+  lifecycle: experimental
+  owner: default-team
