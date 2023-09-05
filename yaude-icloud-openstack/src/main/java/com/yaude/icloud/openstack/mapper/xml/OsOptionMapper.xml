@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yaude.icloud.openstack.mapper.OsOptionMapper">
+
+    <select id="getText" resultType="com.yaude.icloud.openstack.entity.OsOption">
+        select  options_text from os_option where apply_id = #{id} limit 1
+    </select>
+
+    <select id="getApply" resultType="com.yaude.icloud.openstack.vo.OsOptionVo">
+        select *  from (
+        select  id as applyId,instance_name as applyName,options,status,project_id   from  os_apply where status!='' and id = #{id}
+        union
+        select  id as applyId,disk_name as applyName,options,status,project_id   from  os_apply_disk where status!='' and id = #{id}
+        union
+        select  id as applyid,float_ip as applyname,options,status,project_id   from  os_apply_floatip where status!=''  and id = #{id}
+        )tab
+       where tab.project_id in (select distinct project_id  from  os_user_project where is_admin=1 and user_id=#{userId})
+    </select>
+
+    <select id="getProjectId" resultType="com.yaude.icloud.openstack.vo.OsOptionVo">
+        <if test=" applyType==1">
+            select  project_id,vm_id as signId,flavor_id as adjustType from   os_apply where id =#{applyId}
+        </if>
+        <if test=" applyType==2">
+            select  project_id,float_ip as signId , '' as adjustType from   os_apply_floatip where id =#{applyId}
+        </if>
+        <if test=" applyType==3">
+            select  project_id,disk_id as signId , size as adjustType from   os_apply_disk where id =#{applyId}
+        </if>
+    </select>
+
+    <select id="deleteOption" resultType="com.yaude.icloud.openstack.entity.OsOption">
+        delete from os_option where apply_id=#{applyId} and apply_type=#{applyType}
+    </select>
+
+
+</mapper>

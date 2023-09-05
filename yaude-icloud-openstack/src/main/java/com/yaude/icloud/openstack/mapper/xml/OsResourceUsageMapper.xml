@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yaude.icloud.openstack.mapper.OsResourceUsageMapper">
+
+    <select id="getMonthCountInfo" resultType="com.yaude.icloud.openstack.vo.OsResourceUsageVo">
+        SELECT DATE_FORMAT(t.usage_date,'%Y-%m') as mon,
+        sum(ram) ram,
+        sum(t.total_vcpus_usage) total_vcpus_usage,
+        sum(t.total_local_gb_usage) total_local_gb_usage,
+        sum(t.total_memory_mb_usage) total_memory_mb_usage,
+        sum(t.total_hours) total_hours
+        FROM `os_resource_usage` t where  project_id=#{projectId}
+        <if test="''!=startMonth and startMonth!=null">
+            and date_format(t.usage_date,'%Y-%m')>= #{startMonth}
+        </if>
+        <if test="''!=endMonth and endMonth!=null">
+            and date_format(t.usage_date,'%Y-%m') &lt;=  #{endMonth}
+        </if>
+        GROUP BY mon order by mon DESC limit 12
+    </select>
+
+    <select id="getYearCountInfo" resultType="com.yaude.icloud.openstack.vo.OsResourceUsageVo">
+        SELECT DATE_FORMAT(t.usage_date,'%Y') as years,
+        sum(ram) ram,
+        sum(t.total_vcpus_usage) total_vcpus_usage,
+        sum(t.total_local_gb_usage) total_local_gb_usage,
+        sum(t.total_memory_mb_usage) total_memory_mb_usage,
+        sum(t.total_hours) total_hours
+        FROM `os_resource_usage` t where  project_id=#{projectId}
+        <if test="''!=startYear and startYear!=null">
+            and date_format(t.usage_date,'%Y')>= #{startYear}
+        </if>
+        <if test="''!=endYear and endYear!=null">
+            and date_format(t.usage_date,'%Y) &lt;=  #{endYear}
+        </if>
+        GROUP BY years order by years DESC limit 12
+    </select>
+</mapper>

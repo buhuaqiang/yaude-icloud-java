@@ -1,0 +1,384 @@
+package com.yaude.modules.system.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yaude.common.constant.CacheConstant;
+import com.yaude.common.constant.CommonConstant;
+import com.yaude.common.system.vo.DictModel;
+import com.yaude.common.system.vo.DictModelMany;
+import com.yaude.common.system.vo.DictQuery;
+import lombok.extern.slf4j.Slf4j;
+import com.yaude.common.util.SqlInjectionUtil;
+import com.yaude.common.util.oConvertUtils;
+import com.yaude.modules.system.entity.SysDict;
+import com.yaude.modules.system.entity.SysDictItem;
+import com.yaude.modules.system.mapper.SysDictItemMapper;
+import com.yaude.modules.system.mapper.SysDictMapper;
+import com.yaude.modules.system.model.TreeSelectModel;
+import com.yaude.modules.system.service.ISysDictService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * <p>
+ * 字典表 服務實現類
+ * </p>
+ *
+ * @Author zhangweijian
+ * @since 2018-12-28
+ */
+@Service
+@Slf4j
+public class SysDictServiceImpl extends ServiceImpl<SysDictMapper, SysDict> implements ISysDictService {
+
+    @Autowired
+    private SysDictMapper sysDictMapper;
+    @Autowired
+    private SysDictItemMapper sysDictItemMapper;
+
+	/**
+	 * 通過查詢指定code 獲取字典
+	 * @param code
+	 * @return
+	 */
+	@Override
+	@Cacheable(value = CacheConstant.SYS_DICT_CACHE,key = "#code", unless = "#result == null ")
+	public List<DictModel> queryDictItemsByCode(String code) {
+		log.debug("無緩存dictCache的時候調用這里！");
+		return sysDictMapper.queryDictItemsByCode(code);
+	}
+
+	@Override
+	@Cacheable(value = CacheConstant.SYS_ENABLE_DICT_CACHE,key = "#code", unless = "#result == null ")
+	public List<DictModel> queryEnableDictItemsByCode(String code) {
+		log.debug("無緩存dictCache的時候調用這里！");
+		return sysDictMapper.queryEnableDictItemsByCode(code);
+	}
+
+	@Override
+	public Map<String, List<DictModel>> queryDictItemsByCodeList(List<String> dictCodeList) {
+		List<DictModelMany> list = sysDictMapper.queryDictItemsByCodeList(dictCodeList);
+		Map<String, List<DictModel>> dictMap = new HashMap<>();
+		for (DictModelMany dict : list) {
+			List<DictModel> dictItemList = dictMap.computeIfAbsent(dict.getDictCode(), i -> new ArrayList<>());
+			dict.setDictCode(null);
+			dictItemList.add(new DictModel(dict.getValue(), dict.getText()));
+		}
+		return dictMap;
+	}
+
+	@Override
+	@Cacheable(value = CacheConstant.SYS_DICT_ALLTABLE_CACHE)
+	public Map<String, List<DictModel>> queryAllDictItems() {
+		Map<String, List<DictModel>> res = new HashMap<String, List<DictModel>>();
+		List<SysDict> ls = sysDictMapper.selectList(null);
+		LambdaQueryWrapper<SysDictItem> queryWrapper = new LambdaQueryWrapper<SysDictItem>();
+		queryWrapper.eq(SysDictItem::getStatus, 1);
+		queryWrapper.orderByAsc(SysDictItem::getSortOrder);
+		List<SysDictItem> sysDictItemList = sysDictItemMapper.selectList(queryWrapper);
+
+		for (SysDict d : ls) {
+			List<DictModel> dictModelList = sysDictItemList.stream().filter(s -> d.getId().equals(s.getDictId())).map(item -> {
+				DictModel dictModel = new DictModel();
+				dictModel.setText(item.getItemText());
+				dictModel.setValue(item.getItemValue());
+				dictModel.setDictItemId(item.getId());
+				return dictModel;
+			}).collect(Collectors.toList());
+			res.put(d.getDictCode(), dictModelList);
+		}
+		log.debug("-------登錄加載系統字典-----" + res.toString());
+		return res;
+	}
+
+	/**
+	 * 通過查詢指定code 獲取字典值text
+	 * @param code
+	 * @param key
+	 * @return
+	 */
+
+	@Override
+	@Cacheable(value = CacheConstant.SYS_DICT_CACHE,key = "#code+':'+#key", unless = "#result == null ")
+	public String queryDictTextByKey(String code, String key) {
+		log.debug("無緩存dictText的時候調用這里！");
+		return sysDictMapper.queryDictTextByKey(code, key);
+	}
+
+	@Override
+	public Map<String, List<DictModel>> queryManyDictByKeys(List<String> dictCodeList, List<String> keys) {
+		List<DictModelMany> list = sysDictMapper.queryManyDictByKeys(dictCodeList, keys);
+		Map<String, List<DictModel>> dictMap = new HashMap<>();
+		for (DictModelMany dict : list) {
+			List<DictModel> dictItemList = dictMap.computeIfAbsent(dict.getDictCode(), i -> new ArrayList<>());
+			dictItemList.add(new DictModel(dict.getValue(), dict.getText()));
+		}
+		return dictMap;
+	}
+
+	/**
+	 * 通過查詢指定table的 text code 獲取字典
+	 * dictTableCache采用redis緩存有效期10分鐘
+	 * @param table
+	 * @param text
+	 * @param code
+	 * @return
+	 */
+	@Override
+	//@Cacheable(value = CacheConstant.SYS_DICT_TABLE_CACHE)
+	public List<DictModel> queryTableDictItemsByCode(String table, String text, String code) {
+		log.debug("無緩存dictTableList的時候調用這里！");
+		return sysDictMapper.queryTableDictItemsByCode(table,text,code);
+	}
+
+	@Override
+	public List<DictModel> queryTableDictItemsByCodeAndFilter(String table, String text, String code, String filterSql) {
+		log.debug("無緩存dictTableList的時候調用這里！");
+		return sysDictMapper.queryTableDictItemsByCodeAndFilter(table,text,code,filterSql);
+	}
+	
+	/**
+	 * 通過查詢指定table的 text code 獲取字典值text
+	 * dictTableCache采用redis緩存有效期10分鐘
+	 * @param table
+	 * @param text
+	 * @param code
+	 * @param key
+	 * @return
+	 */
+	@Override
+	@Cacheable(value = CacheConstant.SYS_DICT_TABLE_CACHE, unless = "#result == null ")
+	public String queryTableDictTextByKey(String table,String text,String code, String key) {
+		log.debug("無緩存dictTable的時候調用這里！");
+		return sysDictMapper.queryTableDictTextByKey(table,text,code,key);
+	}
+
+	@Override
+	public List<DictModel> queryTableDictTextByKeys(String table, String text, String code, List<String> keys) {
+		return sysDictMapper.queryTableDictTextByKeys(table, text, code, keys);
+	}
+
+	@Override
+	public List<String> queryTableDictByKeys(String table, String text, String code, String keys) {
+		return this.queryTableDictByKeys(table, text, code, keys, true);
+	}
+
+	/**
+	 * 通過查詢指定table的 text code 獲取字典，包含text和value
+	 * dictTableCache采用redis緩存有效期10分鐘
+	 * @param table
+	 * @param text
+	 * @param code
+	 * @param keys (逗號分隔)
+	 * @param delNotExist 是否移除不存在的項，默認為true，設為false如果某個key不存在數據庫中，則直接返回key本身
+	 * @return
+	 */
+	@Override
+	//update-begin--Author:lvdandan  Date:20201204 for：JT-36【online】樹形列表bug修改后，還是顯示原來值 暫時去掉緩存
+	//@Cacheable(value = CacheConstant.SYS_DICT_TABLE_BY_KEYS_CACHE)
+	//update-end--Author:lvdandan  Date:20201204 for：JT-36【online】樹形列表bug修改后，還是顯示原來值 暫時去掉緩存
+	public List<String> queryTableDictByKeys(String table, String text, String code, String keys, boolean delNotExist) {
+		if(oConvertUtils.isEmpty(keys)){
+			return null;
+		}
+		String[] keyArray = keys.split(",");
+		List<DictModel> dicts = sysDictMapper.queryTableDictByKeys(table, text, code, keyArray);
+		List<String> texts = new ArrayList<>(dicts.size());
+
+		// update-begin--author:sunjianlei--date:20210514--for：新增delNotExist參數，設為false不刪除數據庫里不存在的key ----
+		// 查詢出來的順序可能是亂的，需要排個序
+		for (String key : keyArray) {
+			List<DictModel> res = dicts.stream().filter(i -> key.equals(i.getValue())).collect(Collectors.toList());
+			if (res.size() > 0) {
+				texts.add(res.get(0).getText());
+			} else if (!delNotExist) {
+				texts.add(key);
+			}
+		}
+		// update-end--author:sunjianlei--date:20210514--for：新增delNotExist參數，設為false不刪除數據庫里不存在的key ----
+
+		return texts;
+	}
+
+    /**
+     * 根據字典類型id刪除關聯表中其對應的數據
+     */
+    @Override
+    public boolean deleteByDictId(SysDict sysDict) {
+        sysDict.setDelFlag(CommonConstant.DEL_FLAG_1);
+        return  this.updateById(sysDict);
+    }
+
+    @Override
+    @Transactional
+    public Integer saveMain(SysDict sysDict, List<SysDictItem> sysDictItemList) {
+		int insert=0;
+    	try{
+			 insert = sysDictMapper.insert(sysDict);
+			if (sysDictItemList != null) {
+				for (SysDictItem entity : sysDictItemList) {
+					entity.setDictId(sysDict.getId());
+					entity.setStatus(1);
+					sysDictItemMapper.insert(entity);
+				}
+			}
+		}catch(Exception e){
+			return insert;
+		}
+		return insert;
+    }
+
+	@Override
+	public List<DictModel> queryAllDepartBackDictModel() {
+		return baseMapper.queryAllDepartBackDictModel();
+	}
+
+	@Override
+	public List<DictModel> queryAllUserBackDictModel() {
+		return baseMapper.queryAllUserBackDictModel();
+	}
+	
+	@Override
+	public List<DictModel> queryTableDictItems(String table, String text, String code, String keyword) {
+		return baseMapper.queryTableDictItems(table, text, code, "%"+keyword+"%");
+	}
+
+	@Override
+	public List<DictModel> queryLittleTableDictItems(String table, String text, String code, String condition, String keyword, int pageSize) {
+    	Page<DictModel> page = new Page<DictModel>(1, pageSize);
+		page.setSearchCount(false);
+		String filterSql = getFilterSql(text, code, condition, keyword);
+		IPage<DictModel> pageList = baseMapper.queryTableDictWithFilter(page, table, text, code, filterSql);
+		return pageList.getRecords();
+	}
+
+	/**
+	 * 獲取條件語句
+	 * @param text
+	 * @param code
+	 * @param condition
+	 * @param keyword
+	 * @return
+	 */
+	private String getFilterSql(String text, String code, String condition, String keyword){
+		String keywordSql = null, filterSql = "", sql_where = " where ";
+		if(oConvertUtils.isNotEmpty(keyword)){
+			// 判斷是否是多選
+			if (keyword.contains(",")) {
+				String inKeywords = "\"" + keyword.replaceAll(",", "\",\"") + "\"";
+				keywordSql = "(" + text + " in (" + inKeywords + ") or " + code + " in (" + inKeywords + "))";
+			} else {
+				keywordSql = "("+text + " like '%"+keyword+"%' or "+ code + " like '%"+keyword+"%')";
+			}
+		}
+		if(oConvertUtils.isNotEmpty(condition) && oConvertUtils.isNotEmpty(keywordSql)){
+			filterSql+= sql_where + condition + " and " + keywordSql;
+		}else if(oConvertUtils.isNotEmpty(condition)){
+			filterSql+= sql_where + condition;
+		}else if(oConvertUtils.isNotEmpty(keywordSql)){
+			filterSql+= sql_where + keywordSql;
+		}
+		return filterSql;
+	}
+	@Override
+	public List<DictModel> queryAllTableDictItems(String table, String text, String code, String condition, String keyword) {
+		String filterSql = getFilterSql(text, code, condition, keyword);
+		List<DictModel> ls = baseMapper.queryAllTableDictItems(table, text, code, filterSql);
+    	return ls;
+	}
+
+	@Override
+	public List<TreeSelectModel> queryTreeList(Map<String, String> query,String table, String text, String code, String pidField,String pid,String hasChildField) {
+		return baseMapper.queryTreeList(query,table, text, code, pidField, pid,hasChildField);
+	}
+
+	@Override
+	public void deleteOneDictPhysically(String id) {
+		this.baseMapper.deleteOneById(id);
+		this.sysDictItemMapper.delete(new LambdaQueryWrapper<SysDictItem>().eq(SysDictItem::getDictId,id));
+	}
+
+	@Override
+	public void updateDictDelFlag(int delFlag, String id) {
+		baseMapper.updateDictDelFlag(delFlag,id);
+	}
+
+	@Override
+	public List<SysDict> queryDeleteList() {
+		return baseMapper.queryDeleteList();
+	}
+
+	@Override
+	public List<DictModel> queryDictTablePageList(DictQuery query, int pageSize, int pageNo) {
+		Page page = new Page(pageNo,pageSize,false);
+		Page<DictModel> pageList = baseMapper.queryDictTablePageList(page, query);
+		return pageList.getRecords();
+	}
+
+	@Override
+	public List<DictModel> getDictItems(String dictCode) {
+		List<DictModel> ls;
+		if (dictCode.contains(",")) {
+			//關聯表字典（舉例：sys_user,realname,id）
+			String[] params = dictCode.split(",");
+			if (params.length < 3) {
+				// 字典Code格式不正確
+				return null;
+			}
+			//SQL注入校驗（只限制非法串改數據庫）
+			final String[] sqlInjCheck = {params[0], params[1], params[2]};
+			SqlInjectionUtil.filterContent(sqlInjCheck);
+			if (params.length == 4) {
+				// SQL注入校驗（查詢條件SQL 特殊check，此方法僅供此處使用）
+				SqlInjectionUtil.specialFilterContent(params[3]);
+				ls = this.queryTableDictItemsByCodeAndFilter(params[0], params[1], params[2], params[3]);
+			} else if (params.length == 3) {
+				ls = this.queryTableDictItemsByCode(params[0], params[1], params[2]);
+			} else {
+				// 字典Code格式不正確
+				return null;
+			}
+		} else {
+			//字典表
+			ls = this.queryDictItemsByCode(dictCode);
+		}
+		return ls;
+	}
+
+	@Override
+	public List<DictModel> loadDict(String dictCode, String keyword, Integer pageSize) {
+		if (dictCode.contains(",")) {
+			//update-begin-author:taoyan date:20210329 for: 下拉搜索不支持表名后加查詢條件
+			String[] params = dictCode.split(",");
+			String condition = null;
+			if (params.length != 3 && params.length != 4) {
+				// 字典Code格式不正確
+				return null;
+			} else if (params.length == 4) {
+				condition = params[3];
+			}
+			List<DictModel> ls;
+			if (pageSize != null) {
+				ls = this.queryLittleTableDictItems(params[0], params[1], params[2], condition, keyword, pageSize);
+			} else {
+				ls = this.queryAllTableDictItems(params[0], params[1], params[2], condition, keyword);
+			}
+			//update-end-author:taoyan date:20210329 for: 下拉搜索不支持表名后加查詢條件
+			return ls;
+		} else {
+			// 字典Code格式不正確
+			return null;
+		}
+	}
+
+}

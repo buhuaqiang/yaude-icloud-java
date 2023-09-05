@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yaude.modules.system.mapper.SysDictMapper">
+
+	<!-- 通過字典code獲取字典數據 -->
+	<select id="queryDictItemsByCode" parameterType="String"  resultType="com.yaude.common.system.vo.DictModel">
+		   select s.item_value as "value",s.item_text as "text" from sys_dict_item s
+		   where dict_id = (select id from sys_dict where dict_code = #{code})
+		   order by s.sort_order asc
+	</select>
+
+	<!-- 通過字典code獲取有效的字典數據項 -->
+	<select id="queryEnableDictItemsByCode" parameterType="String"  resultType="com.yaude.common.system.vo.DictModel">
+		   select s.item_value as "value",s.item_text as "text" from sys_dict_item s
+		   where dict_id = (select id from sys_dict where dict_code = #{code})
+		   and s.status = 1
+		   order by s.sort_order asc
+	</select>
+
+	<!-- 通過多個字典code獲取字典數據 -->
+	<select id="queryDictItemsByCodeList" parameterType="String" resultType="com.yaude.common.system.vo.DictModelMany">
+		SELECT
+			dict.dict_code,
+			item.item_text AS "text",
+			item.item_value AS "value"
+		FROM
+			sys_dict_item item
+		INNER JOIN sys_dict dict ON dict.id = item.dict_id
+		WHERE dict.dict_code IN (
+			<foreach item="dictCode" collection="dictCodeList" separator=",">
+				#{dictCode}
+			</foreach>
+		)
+		ORDER BY item.sort_order ASC
+	</select>
+
+	<!-- 通過字典code獲取字典數據 -->
+	<select id="queryDictTextByKey" parameterType="String"  resultType="String">
+		   select s.item_text from sys_dict_item s 
+		   where s.dict_id = (select id from sys_dict where dict_code = #{code})
+		   and s.item_value = #{key}
+	</select>
+
+	<!-- 通過字典code獲取字典數據，可批量查詢 -->
+	<select id="queryManyDictByKeys" parameterType="String"  resultType="com.yaude.common.system.vo.DictModelMany">
+		SELECT
+			dict.dict_code,
+			item.item_text AS "text",
+			item.item_value AS "value"
+		FROM
+			sys_dict_item item
+		INNER JOIN sys_dict dict ON dict.id = item.dict_id
+		WHERE dict.dict_code IN (
+			<foreach item="dictCode" collection="dictCodeList" separator=",">
+				#{dictCode}
+			</foreach>
+		)
+		AND item.item_value IN (
+			<foreach item="key" collection="keys" separator=",">
+				#{key}
+			</foreach>
+		)
+	</select>
+
+	<!--通過查詢指定table的 text code 獲取字典-->
+	<select id="queryTableDictItemsByCode" parameterType="String"  resultType="com.yaude.common.system.vo.DictModel">
+		   select ${text} as "text",${code} as "value" from ${table}
+	</select>
+	
+	<!--通過查詢指定table的 text code 獲取字典（指定查詢條件）-->
+	<select id="queryTableDictItemsByCodeAndFilter" parameterType="String"  resultType="com.yaude.common.system.vo.DictModel">
+		   select ${text} as "text",${code} as "value" from ${table}
+		<if test="filterSql != null and filterSql != ''">
+			where ${filterSql}
+		</if>
+	</select>
+	
+	<!--通過查詢指定table的 text code key 獲取字典值-->
+	<select id="queryTableDictTextByKey" parameterType="String" resultType="String">
+		   select ${text} as "text" from ${table} where ${code}= #{key}
+	</select>
+
+	<!--通過查詢指定table的 text code key 獲取字典值，可批量查詢-->
+	<select id="queryTableDictTextByKeys" parameterType="String" resultType="com.yaude.common.system.vo.DictModel">
+		select ${text} as "text", ${code} as "value" from ${table} where ${code} IN (
+			<foreach item="key" collection="keys" separator=",">
+				#{key}
+			</foreach>
+		)
+	</select>
+
+	<!--通過查詢指定table的 text code key 獲取字典值，包含value-->
+	<select id="queryTableDictByKeys" parameterType="String" resultType="com.yaude.common.system.vo.DictModel">
+		select ${text} as "text", ${code} as "value" from ${table} where ${code} in
+		<foreach item="key" collection="keyArray" open="(" separator="," close=")">
+			#{key}
+		</foreach>
+	</select>
+
+	<!-- 重復校驗 sql語句 -->
+	<select id="duplicateCheckCountSql" resultType="Long" parameterType="com.yaude.modules.system.model.DuplicateCheckVo">
+		SELECT COUNT(*) FROM ${tableName} WHERE ${fieldName} = #{fieldVal} and id &lt;&gt; #{dataId}
+	</select>
+	
+	<!-- 重復校驗 sql語句 -->
+	<select id="duplicateCheckCountSqlNoDataId" resultType="Long" parameterType="com.yaude.modules.system.model.DuplicateCheckVo">
+		SELECT COUNT(*) FROM ${tableName} WHERE ${fieldName} = #{fieldVal}
+	</select>
+		
+	<!-- 查詢部門信息 作為字典數據 -->
+	<select id="queryAllDepartBackDictModel" resultType="com.yaude.common.system.vo.DictModel">
+		select id as "value",depart_name as "text" from sys_depart where del_flag = '0'
+	</select>
+	
+		<!-- 查詢用戶信息 作為字典數據 -->
+	<select id="queryAllUserBackDictModel" resultType="com.yaude.common.system.vo.DictModel">
+		select username as "value",realname as "text" from sys_user where del_flag = '0'
+	</select>
+	
+	<!--通過查詢指定table的 text code 獲取字典數據，且支持關鍵字查詢 -->
+	<select id="queryTableDictItems" parameterType="String"  resultType="com.yaude.common.system.vo.DictModel">
+		select ${text} as "text",${code} as "value" from ${table} where ${text} like #{keyword}
+	</select>
+	
+	<!-- 根據表名、顯示字段名、存儲字段名、父ID查詢樹 -->
+	<select id="queryTreeList" parameterType="Object" resultType="com.yaude.modules.system.model.TreeSelectModel">
+		select ${text} as "title",
+			   ${code} as "key",
+			   <if test="hasChildField != null and hasChildField != ''">
+			   (case when ${hasChildField} = '1' then 0 else 1 end) as isLeaf,
+			   </if>
+			   ${pidField} as parentId
+			   from ${table}
+			   where
+			   <choose>
+				   <when test="pid != null and pid != ''">
+					   ${pidField} = #{pid}
+				   </when>
+				   <otherwise>
+					   (${pidField} = '' OR ${pidField} IS NULL)
+				   </otherwise>
+			   </choose>
+			   <if test="query!= null">
+				   <foreach collection="query.entrySet()" item="value"  index="key" >
+				   	and ${key} = #{value}
+				   </foreach>
+			   </if>
+	</select>
+
+
+	<!-- 分頁查詢字典表數據 -->
+	<select id="queryDictTablePageList" parameterType="Object" resultType="com.yaude.common.system.vo.DictModel">
+		select ${query.text} as "text",${query.code} as "value" from ${query.table}
+		where 1 = 1
+		<if test="query.keyword != null and query.keyword != ''">
+			and (${query.text} like '%${query.keyword}%' or ${query.code} like '%${query.keyword}%')
+		</if>
+		<if test="query.codeValue != null and query.codeValue != ''">
+			and ${query.code} = #{query.codeValue}
+		</if>
+	</select>
+
+	<!--通過查詢指定table的 text code 獲取字典數據，且支持關鍵字和自定義查詢條件查詢 分頁-->
+	<select id="queryTableDictWithFilter" parameterType="String"  resultType="com.yaude.common.system.vo.DictModel">
+		select ${text} as "text", ${code} as "value" from ${table}
+		<if test="filterSql != null and filterSql != ''">
+			${filterSql}
+		</if>
+	</select>
+
+	<!--通過查詢指定table的 text code 獲取字典數據，且支持關鍵字和自定義查詢條件查詢 獲取所有 -->
+	<select id="queryAllTableDictItems" parameterType="String"  resultType="com.yaude.common.system.vo.DictModel">
+		select ${text} as "text", ${code} as "value" from ${table}
+		<if test="filterSql != null and filterSql != ''">
+			${filterSql}
+		</if>
+	</select>
+
+
+
+</mapper>

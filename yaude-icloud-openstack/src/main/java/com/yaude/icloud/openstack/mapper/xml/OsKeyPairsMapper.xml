@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yaude.icloud.openstack.mapper.OsKeyPairsMapper">
+
+
+    <select id="getPrivateKey" resultType="com.yaude.icloud.openstack.entity.OsKeyPairs">
+        select  * from  os_key_pairs where   project_id=#{projectId}
+    </select>
+
+</mapper>

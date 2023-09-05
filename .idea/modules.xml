@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/yaude-boot-base/yaude-boot-base.iml" filepath="$PROJECT_DIR$/yaude-boot-base/yaude-boot-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yaude-boot-base/yaude-boot-base-api/yaude-boot-base-api.iml" filepath="$PROJECT_DIR$/yaude-boot-base/yaude-boot-base-api/yaude-boot-base-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yaude-boot-base/yaude-boot-base-core/yaude-boot-base-core.iml" filepath="$PROJECT_DIR$/yaude-boot-base/yaude-boot-base-core/yaude-boot-base-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yaude-boot-base/yaude-boot-base-tools/yaude-boot-base-tools.iml" filepath="$PROJECT_DIR$/yaude-boot-base/yaude-boot-base-tools/yaude-boot-base-tools.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yaude-boot-module-demo/yaude-boot-module-demo.iml" filepath="$PROJECT_DIR$/yaude-boot-module-demo/yaude-boot-module-demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yaude-boot-module-system/yaude-boot-module-system.iml" filepath="$PROJECT_DIR$/yaude-boot-module-system/yaude-boot-module-system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yaude-boot-parent.iml" filepath="$PROJECT_DIR$/yaude-boot-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yaude-icloud-license/yaude-icloud-license.iml" filepath="$PROJECT_DIR$/yaude-icloud-license/yaude-icloud-license.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yaude-icloud-openstack/yaude-icloud-openstack.iml" filepath="$PROJECT_DIR$/yaude-icloud-openstack/yaude-icloud-openstack.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yaude-boot-base/yaude-boot-base-api/yaude-system-cloud-api/yaude-system-cloud-api.iml" filepath="$PROJECT_DIR$/yaude-boot-base/yaude-boot-base-api/yaude-system-cloud-api/yaude-system-cloud-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yaude-boot-base/yaude-boot-base-api/yaude-system-local-api/yaude-system-local-api.iml" filepath="$PROJECT_DIR$/yaude-boot-base/yaude-boot-base-api/yaude-system-local-api/yaude-system-local-api.iml" />
+    </modules>
+  </component>
+</project>
