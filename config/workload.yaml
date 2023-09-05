@@ -10,6 +10,9 @@ spec:
   - name: annotations
     value:
       autoscaling.knative.dev/minScale: "1"
+       params:
+  - name: dockerfile
+    value: ./yaude-boot-module-system/Dockerfile
   source:
     git:
       url: https://github.com/buhuaqiang/yaude-icloud-java
