@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yaude.icloud.openstack.mapper.OsUserProjectMapper">
+
+    <select id="queryUserProjectList" resultType="com.yaude.icloud.openstack.vo.OsUserProjectVo">
+        select o.*,s.username from  os_user_project o
+        left join sys_user s on s.id = o.user_id
+        where o.project_id = '${projectId}'
+    </select>
+
+    <select id="getProject"  resultType="com.yaude.icloud.openstack.vo.OsUserProjectVo">
+       select *  from os_user_project where user_id=#{userId}
+    </select>
+</mapper>

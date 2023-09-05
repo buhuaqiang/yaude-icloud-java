@@ -1,0 +1,38 @@
+package ${bussiPackage}.${entityPackage}.service;
+
+import ${bussiPackage}.${entityPackage}.entity.${entityName};
+import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.common.exception.JeecgBootException;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import java.util.List;
+
+/**
+ * @Description: ${tableVo.ftlDescription}
+ * @Author: jeecg-boot
+ * @Date:   ${.now?string["yyyy-MM-dd"]}
+ * @Version: V1.0
+ */
+public interface I${entityName}Service extends IService<${entityName}> {
+
+	/**根節點父ID的值*/
+	public static final String ROOT_PID_VALUE = "0";
+	
+	/**樹節點有子節點狀態值*/
+	public static final String HASCHILD = "1";
+	
+	/**樹節點無子節點狀態值*/
+	public static final String NOCHILD = "0";
+
+	/**新增節點*/
+	void add${entityName}(${entityName} ${entityName?uncap_first});
+	
+	/**修改節點*/
+	void update${entityName}(${entityName} ${entityName?uncap_first}) throws JeecgBootException;
+	
+	/**刪除節點*/
+	void delete${entityName}(String id) throws JeecgBootException;
+
+	/**查詢所有數據，無分頁*/
+    List<${entityName}> queryTreeListNoPage(QueryWrapper<${entityName}> queryWrapper);
+
+}
