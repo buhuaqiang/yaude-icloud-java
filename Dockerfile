@@ -8,12 +8,12 @@ FROM maven:3.5.0-jdk-8-alpine AS builder
 #ADD ./yaude-icloud-license yaude-icloud-license
 #ADD ./yaude-icloud-openstack yaude-icloud-openstack
 
-RUN code
+RUN mkdir code
 COPY ./* code
 WORKDIR code/
 
 # package jar
-RUN mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
+RUN cd /code/ && mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
 
 
 
