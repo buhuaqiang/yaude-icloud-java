@@ -25,6 +25,8 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 RUN mkdir logs
 
+RUN chmod 777 /logs
+
 # copy jar from the first stage
 COPY --from=builder yaude-boot-module-system/target/yaude-boot-module-system-2.4.6.jar yaude-boot-module-system-2.4.6.jar
 
