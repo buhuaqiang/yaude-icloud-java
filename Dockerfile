@@ -1,19 +1,19 @@
 FROM maven:3.5.0-jdk-8-alpine AS builder
 
 # add pom.xml and source code
-#ADD ./pom.xml pom.xml
-#ADD ./yaude-boot-base yaude-boot-base
-#ADD ./yaude-boot-module-demo yaude-boot-module-demo
-#ADD ./yaude-boot-module-system yaude-boot-module-system
-#ADD ./yaude-icloud-license yaude-icloud-license
-#ADD ./yaude-icloud-openstack yaude-icloud-openstack
+ADD ./pom.xml pom.xml
+ADD ./yaude-boot-base yaude-boot-base
+ADD ./yaude-boot-module-demo yaude-boot-module-demo
+ADD ./yaude-boot-module-system yaude-boot-module-system
+ADD ./yaude-icloud-license yaude-icloud-license
+ADD ./yaude-icloud-openstack yaude-icloud-openstack
 
-RUN mkdir code
-COPY ./* code/
-WORKDIR code/
+#RUN mkdir code
+#COPY ./* code/
+#WORKDIR code/
 
 # package jar
-RUN cd /code/ && mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
+RUN  mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
 
 
 
