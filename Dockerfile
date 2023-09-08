@@ -9,7 +9,7 @@ FROM maven:3.5.0-jdk-8-alpine AS builder
 #ADD ./yaude-icloud-openstack yaude-icloud-openstack
 
 RUN mkdir code
-COPY ./* code
+COPY ./* code/
 WORKDIR code/
 
 # package jar
