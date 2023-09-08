@@ -9,8 +9,7 @@ spec:
   params:
   - name: annotations
     value:
-      autoscaling.knative.dev/minScale: "1"
-       params:
+      autoscaling.knative.dev/minScale: 1
   - name: dockerfile
     value: ./yaude-boot-module-system/Dockerfile
   source:
