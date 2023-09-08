@@ -49,4 +49,4 @@ ENV JVM_OPTS="-XX:+UseContainerSupport \
                -Djava.security.egd=file:/dev/./urandom"
 
 ENTRYPOINT [ "sh", "-c", "java $JVM_OPTS   -jar yaude-boot-module-system-2.4.6.jar" ]
-EXPOSE 8091
+EXPOSE 8080
