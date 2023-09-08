@@ -13,7 +13,7 @@ ADD ./yaude-icloud-openstack yaude-icloud-openstack
 #WORKDIR code/
 
 # package jar
-RUN  mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
+RUN  mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dmaven.repo.local=./.m2 -P dev
 
 
 
@@ -23,6 +23,7 @@ MAINTAINER buhuaqiang@163.com
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
+RUN mkdir logs
 
 # copy jar from the first stage
 COPY --from=builder yaude-boot-module-system/target/yaude-boot-module-system-2.4.6.jar yaude-boot-module-system-2.4.6.jar
