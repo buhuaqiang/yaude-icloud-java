@@ -1,21 +1,22 @@
 FROM maven:3.5.0-jdk-8-alpine AS builder
 
 # add pom.xml and source code
-ADD ./pom.xml pom.xml
-ADD ./yaude-boot-base yaude-boot-base
-ADD ./yaude-boot-module-demo yaude-boot-module-demo
-ADD ./yaude-boot-module-system yaude-boot-module-system
-ADD ./yaude-icloud-license yaude-icloud-license
-ADD ./yaude-icloud-openstack yaude-icloud-openstack
+#ADD ./pom.xml pom.xml
+#ADD ./yaude-boot-base yaude-boot-base
+#ADD ./yaude-boot-module-demo yaude-boot-module-demo
+#ADD ./yaude-boot-module-system yaude-boot-module-system
+#ADD ./yaude-icloud-license yaude-icloud-license
+#ADD ./yaude-icloud-openstack yaude-icloud-openstack
 
 
 # package jar
-RUN mvn clean package
+mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
 
 
-FROM anapsix/alpine-java:8_server-jre_unlimited
 
-MAINTAINER jeecgos@163.com
+#FROM anapsix/alpine-java:8_server-jre_unlimited
+
+MAINTAINER buhuaqiang@163.com
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
