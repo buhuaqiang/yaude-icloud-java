@@ -10,7 +10,7 @@ FROM maven:3.5.0-jdk-8-alpine AS builder
 
 
 # package jar
-mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
+RUN mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
 
 
 
