@@ -1,5 +1,5 @@
 server:
-  port: 8091
+  port: 8080
   tomcat:
     max-swallow-size: -1
   error:
@@ -144,7 +144,7 @@ spring:
   #redis 配置
   redis:
     database: 0
-    host: 192.168.103.100
+    host: 210.59.165.137
     lettuce:
       pool:
         max-active: 8   #最大连接数据库连接数,设 -1 为没有限制

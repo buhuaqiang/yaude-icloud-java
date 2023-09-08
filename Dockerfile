@@ -1,5 +1,8 @@
 FROM maven:3.5.0-jdk-8-alpine AS builder
 
+# 设置 Maven 的仓库目录
+ENV MAVEN_REPO=/root/.m2/repository
+
 # add pom.xml and source code
 ADD ./pom.xml pom.xml
 ADD ./yaude-boot-base yaude-boot-base
@@ -8,24 +11,28 @@ ADD ./yaude-boot-module-system yaude-boot-module-system
 ADD ./yaude-icloud-license yaude-icloud-license
 ADD ./yaude-icloud-openstack yaude-icloud-openstack
 
+#RUN mkdir code
+#COPY ./* code/
+#WORKDIR code/
 
 # package jar
-RUN mvn clean package
+RUN  mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dmaven.repo.local=./.m2 -P dev
+
+
 
 
 FROM anapsix/alpine-java:8_server-jre_unlimited
 
-MAINTAINER jeecgos@163.com
+MAINTAINER buhuaqiang@163.com
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
+RUN mkdir logs
 
+RUN chmod 777 /logs
 
-
-ADD ./yaude-boot-module-system/target/yaude-boot-module-system-2.4.6.jar ./
-
-ADD ./yaude-boot-module-system/jmx_prometheus_javaagent-0.17.0.jar /jmx_prometheus_javaagent-0.17.0.jar
-ADD ./yaude-boot-module-system/prometheus-jmx-config.yaml /prometheus-jmx-config.yaml
+# copy jar from the first stage
+COPY --from=builder yaude-boot-module-system/target/yaude-boot-module-system-2.4.6.jar yaude-boot-module-system-2.4.6.jar
 
 ENV JVM_OPTS="-XX:+UseContainerSupport \
                -XX:+UnlockExperimentalVMOptions \
@@ -47,6 +54,5 @@ ENV JVM_OPTS="-XX:+UseContainerSupport \
                -Duser.timezone=Asia/Shanghai \
                -Djava.security.egd=file:/dev/./urandom"
 
-ENV JMX_OPTS="-javaagent:/jmx_prometheus_javaagent-0.17.0.jar=9999:/prometheus-jmx-config.yaml"
-ENTRYPOINT [ "sh", "-c", "java $JVM_OPTS  $JMX_OPTS -jar yaude-boot-module-system-2.4.6.jar" ]
-EXPOSE 8091
+ENTRYPOINT [ "sh", "-c", "java $JVM_OPTS   -jar yaude-boot-module-system-2.4.6.jar" ]
+EXPOSE 8080
