@@ -50,7 +50,7 @@ public class JeecgSystemApplication extends SpringBootServletInitializer {
                 "Swagger文檔: \thttp://" + ip + ":" + port + path + "/doc.html\n" +
                 "----------------------------------------------------------");
         log.info("\n----------------------------------------------------------\n\t" +
-                "测试版本变化 V1.0"
+                "测试版本变化 V1.0.1"
                 );
 
     }
