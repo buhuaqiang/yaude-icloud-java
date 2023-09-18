@@ -103,13 +103,12 @@ public class Swagger2Config implements WebMvcConfigurer {
                 // //大標題
                 .title("Yaude-Boot 后臺服務API接口文檔")
                 // 版本號
-                .version("1.0")
+                .version("1.0.1")
 //				.termsOfServiceUrl("NO terms of service")
                 // 描述
-                .description("后臺API接口")
+                .description("后臺API接口 Version 1.0.1")
                 // 作者
                 .contact(new Contact("Yaude Taipei","www.yaude.com.tw","buhuaqiang@163.com"))
-               // .contact("JEECG團隊")
                 .license("The Apache License, Version 2.0")
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
                 .build();
