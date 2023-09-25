@@ -38,6 +38,12 @@ engine:
       substitutions:
       - text: ": yaude-icloud-java"
         with: "': ' + #artifactId.toLowerCase()"
+  - include: [ "README.md" ]
+    chain:
+    - type: ReplaceText
+      substitutions:
+      - text: "yaude-icloud-java"
+        with: "#artifactId.toLowerCase()"
   - include: [ "catalog/*.yaml" ]
     chain:
     - type: ReplaceText
