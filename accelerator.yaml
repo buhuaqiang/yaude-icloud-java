@@ -21,7 +21,7 @@ engine:
   onConflict: NWayDiff
   merge:
   - include: [ "**/*" ]
-    exclude: [ "config/*.yaml", "Tiltfile", , "grype.yaml", "catalog/*.yaml",  ]
+    exclude: [ "config/*.yaml", "Tiltfile", "grype.yaml", "catalog/*.yaml",  ]
   - include: [ "Tiltfile" ]
     chain:
     - type: ReplaceText
