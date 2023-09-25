@@ -21,7 +21,7 @@ engine:
   onConflict: NWayDiff
   merge:
   - include: [ "**/*" ]
-    exclude: [ "config/*.yaml", "Tiltfile", "README.md", "grype.yaml", "catalog/*.yaml", ".github/workflows/**" ]
+    exclude: [ "config/*.yaml", "Tiltfile", , "grype.yaml", "catalog/*.yaml",  ]
   - include: [ "Tiltfile" ]
     chain:
     - type: ReplaceText
@@ -38,12 +38,6 @@ engine:
       substitutions:
       - text: ": yaude-icloud-java"
         with: "': ' + #artifactId.toLowerCase()"
-  - include: [ "README.md" ]
-    chain:
-    - type: ReplaceText
-      substitutions:
-      - text: yaude-icloud-java
-        with: "#artifactId"
   - include: [ "catalog/*.yaml" ]
     chain:
     - type: ReplaceText
