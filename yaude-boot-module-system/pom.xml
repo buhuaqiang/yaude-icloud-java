@@ -87,6 +87,7 @@
 				<configuration>
 					<!--微服务模式下修改为true,跳过此打包插件，否则微服务模块无法引用-->
 					<skip>false</skip>
+					<outputDirectory>${project.basedir}/target</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
