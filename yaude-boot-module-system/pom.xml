@@ -108,7 +108,7 @@
 					<layers>
 						<enabled>true</enabled>
 					</layers>
-					<outputDirectory>${project.parent.basedir}/target</outputDirectory>
+					<outputDirectory>/workspace/target</outputDirectory>
 				</configuration>
 				<executions>
 					<execution>
