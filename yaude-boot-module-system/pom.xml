@@ -103,25 +103,18 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<!--微服务模式下修改为true,跳过此打包插件，否则微服务模块无法引用-->
-					<skip>false</skip>
+					<mainClass>com.yaude.YaudeSystemApplication</mainClass>
+					<layout>ZIP</layout>
+					<layers>
+						<enabled>true</enabled>
+					</layers>
 					<outputDirectory>${project.parent.basedir}/target</outputDirectory>
-				        <excludeDevtools>false</excludeDevtools>
 				</configuration>
 				<executions>
 					<execution>
 						<goals>
-							<goal>build-info</goal>
+							<goal>repackage</goal>
 						</goals>
-						<configuration>
-							<additionalProperties>
-								<spring.boot.version>${project.parent.version}</spring.boot.version>
-								<encoding.source>${project.build.sourceEncoding}</encoding.source>
-								<encoding.reporting>${project.reporting.outputEncoding}</encoding.reporting>
-								<java.source>${maven.compiler.source}</java.source>
-								<java.target>${maven.compiler.target}</java.target>
-							</additionalProperties>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
