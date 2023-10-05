@@ -87,13 +87,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         converters.add(jackson2HttpMessageConverter);
     }
 
-    /**
-     * SpringBootAdmin的Httptrace不見了
-     * https://blog.csdn.net/u013810234/article/details/110097201
-     */
-    @Bean
-    public InMemoryHttpTraceRepository getInMemoryHttpTrace(){
-        return new InMemoryHttpTraceRepository();
-    }
+    
 
 }
