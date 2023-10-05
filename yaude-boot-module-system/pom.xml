@@ -103,7 +103,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 				 	<excludeDevtools>false</excludeDevtools>
-					<outputDirectory>/workspace/target</outputDirectory>
+					<outputDirectory>${project.parent.basedir}/target</outputDirectory>
 				</configuration>
 				<executions>
 					<execution>
