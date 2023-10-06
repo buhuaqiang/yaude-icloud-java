@@ -87,6 +87,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         converters.add(jackson2HttpMessageConverter);
     }
 
-    
+
 
 }
