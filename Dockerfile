@@ -32,7 +32,9 @@ RUN mkdir logs
 RUN chmod 777 /logs
 
 # copy jar from the first stage
-COPY --from=builder yaude-boot-module-system/target/yaude-boot-module-system-2.4.6.jar yaude-boot-module-system-2.4.6.jar
+# 在yaude-boot-module-system pom 已经把yaude-boot-module-system-2.4.6.jar 移到了根目录 target/
+#COPY --from=builder yaude-boot-module-system/target/yaude-boot-module-system-2.4.6.jar yaude-boot-module-system-2.4.6.jar
+COPY --from=builder target/yaude-boot-module-system-2.4.6.jar yaude-boot-module-system-2.4.6.jar
 
 ENV JVM_OPTS="-XX:+UseContainerSupport \
                -XX:+UnlockExperimentalVMOptions \
