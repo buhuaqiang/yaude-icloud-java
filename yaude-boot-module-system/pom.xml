@@ -99,46 +99,12 @@
 	<build>
 		<plugins>
 			<plugin>
-				<!--<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-
-				<configuration>
-				 	<excludeDevtools>false</excludeDevtools>
-					<outputDirectory>${project.parent.basedir}/target</outputDirectory>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>build-info</goal>
-						</goals>
-						<configuration>
-							<additionalProperties>
-								<spring.boot.version>${project.parent.version}</spring.boot.version>
-								<encoding.source>${project.build.sourceEncoding}</encoding.source>
-								<encoding.reporting>${project.reporting.outputEncoding}</encoding.reporting>
-								<java.source>${maven.compiler.source}</java.source>
-								<java.target>${maven.compiler.target}</java.target>
-							</additionalProperties>
-						</configuration>
-					</execution>
-				</executions>-->
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-
 				<configuration>
-					<excludeDevtools>false</excludeDevtools>
-					<outputDirectory>${project.parent.basedir}/target</outputDirectory>
-					<layers>
-						<enabled>true</enabled>
-					</layers>
+					<!--微服务模式下修改为true,跳过此打包插件，否则微服务模块无法引用-->
+					<skip>false</skip>
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
