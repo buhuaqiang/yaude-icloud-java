@@ -13,8 +13,6 @@ ADD ./yaude-icloud-openstack yaude-icloud-openstack
 #COPY ./* code/
 #WORKDIR code/
 
-# 下载依赖包，但不进行构建
-RUN mvn dependency:go-offline
 
 # package jar
 RUN  mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true  -P dev
