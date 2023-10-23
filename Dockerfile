@@ -1,7 +1,5 @@
 FROM maven:3.5.0-jdk-8-alpine AS builder
 
-# 设置 Maven 的仓库目录
-ENV MAVEN_REPO=/root/.m2/repository
 
 # add pom.xml and source code
 ADD ./pom.xml pom.xml
@@ -15,8 +13,11 @@ ADD ./yaude-icloud-openstack yaude-icloud-openstack
 #COPY ./* code/
 #WORKDIR code/
 
+# 下载依赖包，但不进行构建
+RUN mvn dependency:go-offline
+
 # package jar
-RUN  mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dmaven.repo.local=./.m2 -P dev
+RUN  mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true  -P dev
 
 
 
