@@ -98,14 +98,23 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
+			<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+
 				<configuration>
-					<!--微服务模式下修改为true,跳过此打包插件，否则微服务模块无法引用-->
-					<skip>false</skip>
+					<excludeDevtools>false</excludeDevtools>
+					<outputDirectory>${project.parent.basedir}/target</outputDirectory>
+					<layers>
+						<enabled>true</enabled>
+					</layers>
 				</configuration>
-			</plugin>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 		</plugins>
 	</build>
 </project>
