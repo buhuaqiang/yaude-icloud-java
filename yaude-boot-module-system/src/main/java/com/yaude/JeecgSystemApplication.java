@@ -29,12 +29,9 @@ import java.util.Arrays;
 @Slf4j
 @ComponentScan(basePackages = {"com.yaude","com.yaude.icloud"})
 @SpringBootApplication
-public class JeecgSystemApplication extends SpringBootServletInitializer {
+public class JeecgSystemApplication  {
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(JeecgSystemApplication.class);
-    }
+
 
     public static void main(String[] args) throws UnknownHostException {
        /* if(true){
@@ -61,24 +58,24 @@ public class JeecgSystemApplication extends SpringBootServletInitializer {
     }
 
     @Bean
-	public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-		return args -> {
+    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+        return args -> {
 
-			System.out.println("Let's inspect the beans provided by Spring Boot:");
+            System.out.println("Let's inspect the beans provided by Spring Boot:");
 
-			String[] beanNames = ctx.getBeanDefinitionNames();
-			Arrays.sort(beanNames);
-			for (String beanName : beanNames) {
-				System.out.println(beanName);
-			}
+            String[] beanNames = ctx.getBeanDefinitionNames();
+            Arrays.sort(beanNames);
+            for (String beanName : beanNames) {
+                System.out.println(beanName);
+            }
 
-		};
-	}
+        };
+    }
 
-    	@Bean
-	public HttpTraceRepository htttpTraceRepository() {
-		return new InMemoryHttpTraceRepository();
-	}
+    @Bean
+    public HttpTraceRepository htttpTraceRepository() {
+        return new InMemoryHttpTraceRepository();
+    }
 
 
 
